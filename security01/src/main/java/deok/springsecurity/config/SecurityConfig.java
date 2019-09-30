@@ -1,6 +1,8 @@
 package deok.springsecurity.config;
 
 import deok.springsecurity.dao.CustomJdbcDaoImpl;
+import deok.springsecurity.service.CustomFailHandler;
+import deok.springsecurity.service.LoginSuccessHandler;
 import deok.springsecurity.util.NonePasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,18 +25,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private DataSource oneDataSource;
 
+    @Autowired
+    private LoginSuccessHandler loginSuccessHandler;
 
-
+    @Autowired
+    private CustomFailHandler customFailHandler;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
                 .antMatchers("/css/**", "/index").permitAll()
-                .antMatchers("/deokju/index").hasRole("A")
+                .antMatchers("/deokju/index").hasAuthority("A")
                 .and()
                 .formLogin()
-                .loginPage("/login").defaultSuccessUrl("/deokju/index").failureUrl("/login-error");
+                .loginPage("/login").defaultSuccessUrl("/deokju/index").failureUrl("/login-error")
+                .successHandler(loginSuccessHandler)
+                .failureHandler(customFailHandler);
     }
 
     @Autowired
@@ -47,11 +54,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         customJdbcDao.setEnableGroups(false);
 
         auth.authenticationProvider(authenticationProvider(customJdbcDao));
-
-        /*
-        auth
-                .inMemoryAuthentication()
-                .withUser(User.withDefaultPasswordEncoder().username("user").password("1111").roles("USER"));*/
     }
 
     @Bean

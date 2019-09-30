@@ -79,7 +79,7 @@ public class CustomJdbcDaoImpl extends JdbcDaoImpl {
                     public GrantedAuthority mapRow(ResultSet rs, int i) throws SQLException {
                         String roleName = getRolePrefix() + rs.getString(1);
                         return new SimpleGrantedAuthority(roleName);
-                    }
+                }
                 }
 
         );

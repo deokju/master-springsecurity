@@ -21,6 +21,18 @@
 <ul>
     <li>Go to the <a href="/user/index" th:href="@{/user/index}">secured pages</a></li>
 </ul>
+
+<div sec:authorize="hasAuthority('A')">
+    hasAuthority('A')
+</div>
+
+<div sec:authorize="hasRole('A')">
+    A
+</div>
+<div sec:authorize="hasRole('ROLE_A')">
+    ROLE_A
+</div>
+
 </body>
 </html>
 

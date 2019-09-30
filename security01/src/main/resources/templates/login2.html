@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Login page</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="/css/main.css" th:href="@{/css/main.css}"/>
+</head>
+<body>
+<div style="display: inline-block">
+    로그인 화면
+    <form th:action="@{/login}" method="post" id="loginForm">
+        <label for="username">Username</label>:
+        <input type="text" id="username" name="username" autofocus="autofocus"/> <br/>
+        <label for="password">Password</label>:
+        <input type="password" id="password" name="password"/> <br/>
+        <input type="button" id="loginBtn" name="loginBtn" value="Log in"/>
+
+        <input type="hidden" id="loginRedirect" name="loginRedirect" value="/deokju/index" />
+    </form>
+</div>
+
+<p th:if="${securityexceptionmsg}" class="error">Wrong user or password</p>
+
+
+<p th:text="${loginError}">기본 메시지</p>
+<p th:text="${session.SPRING_SECURITY_LAST_EXCEPTION}">[...]</p>
+
+<script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+        crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#loginBtn").on("click", function() {
+           $("#loginForm").submit();
+        });
+    });
+</script>
+</body>
+</html>

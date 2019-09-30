@@ -36,14 +36,14 @@ public class MainController {
 
     @RequestMapping("/login")
     public String login() {
-        return "login";
+        return "login2";
     }
 
     @RequestMapping("/login-error")
     public String loginError(HttpSession session, Model model) {
         model.addAttribute("loginError", true);
         System.out.println(session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION"));
-        return "login";
+        return "login2";
     }
 
 }
