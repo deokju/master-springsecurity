@@ -27,7 +27,7 @@ public class SecuredObjectDao {
             " SELECT A.RESOURCE_PATTERN AS URL, B.AUTHORITY AS AUTHORITY "
                     + " FROM  SECURED_RESOURCES A, SECURED_RESOURCES_ROLE B "
                     + " WHERE A.RESOURCE_ID = B.RESOURCE_ID "
-                    + " AND A.RESOURCE_TYPE = 'url' "
+                    + " AND A.RESOURCE_TYPE = 'method' "
                     + " ORDER BY A.SORT_ORDER ";
 
     /**
@@ -210,4 +210,24 @@ public class SecuredObjectDao {
 
         return configList;
     }
+
+    public String getHierachicalRoles() throws Exception {
+        List<Map<String, Object>> resultList =
+                this.namedParameterJdbcTemplate.queryForList(getSqlHierarchicalRoles(), new HashMap<String, String>());
+
+        Iterator<Map<String, Object>> itr = resultList.iterator();
+        StringBuffer concatedRoles = new StringBuffer();
+        Map<String, Object> tempMap;
+        while(itr.hasNext()) {
+            tempMap = itr.next();
+            concatedRoles.append(tempMap.get("child"));
+            concatedRoles.append(" > ");
+            concatedRoles.append(tempMap.get("parent"));
+            concatedRoles.append(" \n ");
+        }
+
+        return concatedRoles.toString();
+    }
+
+
 }
