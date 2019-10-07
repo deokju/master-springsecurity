@@ -1,13 +1,16 @@
 package deok.springsecurity.dao;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.util.*;
 
+@Component
 public class SecuredObjectDao {
 
     /**
@@ -15,7 +18,7 @@ public class SecuredObjectDao {
      */
     public static final String DEF_ROLES_AND_URL_QUERY  =
               " SELECT A.RESOURCE_PATTERN AS URL, B.AUTHORITY AS AUTHORITY "
-            + " FROM  SECURED_RESOURCES A, SECURED_RESOURCES_ROLE B "
+            + " FROM  SECURED_RESOURCE A, SECURED_RESOURCE_AUTHORITY B "
             + " WHERE A.RESOURCE_ID = B.RESOURCE_ID "
             + " AND A.RESOURCE_TYPE = 'url' "
             + " ORDER BY A.SORT_ORDER ";
@@ -65,6 +68,10 @@ public class SecuredObjectDao {
     private String sqlRegexMatchedRequestMapping;
     private String sqlHierarchicalRoles;
 
+
+    @Autowired
+    DataSource oneDataSource;
+
     public SecuredObjectDao()
     {
         this.sqlRolesAndUrl      = DEF_ROLES_AND_URL_QUERY;
@@ -72,9 +79,12 @@ public class SecuredObjectDao {
         this.sqlRolesAndPointcut = DEF_ROLES_AND_POINTCUT_QUERY;
         this.sqlRegexMatchedRequestMapping = DEF_REGEX_MATCHED_REQUEST_MAPPING_QUERY_ORACLE10G;
         this.sqlHierarchicalRoles = DEF_HIERARCHICAL_ROLES_QUERY;
+
+        this.setDataSource(oneDataSource);
     }
 
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
 
     public void setDataSource( DataSource dataSource ) {
         this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
