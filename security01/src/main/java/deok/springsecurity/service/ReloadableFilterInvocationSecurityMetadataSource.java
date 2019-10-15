@@ -6,25 +6,26 @@ import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Service;
-import sun.misc.Request;
+
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ReloadableFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
+    private final Map<RequestMatcher, Collection<ConfigAttribute>> requestMap;
+
     @Autowired
     private SecuredObjectService securedObjectService;
-
 
     public ReloadableFilterInvocationSecurityMetadataSource(Map<RequestMatcher, Collection<ConfigAttribute>> requestMap) {
         this.requestMap = requestMap;
     }
 
-    private final Map<RequestMatcher, Collection<ConfigAttribute>> requestMap;
-
+    public void setSecuredObjectService(SecuredObjectService securedObjectService) {
+        this.securedObjectService = securedObjectService;
+    }
 
     @Override
     public Collection<ConfigAttribute> getAttributes(Object object) throws IllegalArgumentException {
@@ -43,12 +44,30 @@ public class ReloadableFilterInvocationSecurityMetadataSource implements FilterI
     }
 
     @Override
-    public Collection<ConfigAttribute> getAllConfigAttributes() {
-        return null;
+    public Collection<ConfigAttribute> getAllConfigAttributes(){
+        Set<ConfigAttribute> allAttributes = new HashSet<>();
+        for(Map.Entry<RequestMatcher, Collection<ConfigAttribute>> entry : requestMap.entrySet()) {
+            allAttributes.addAll(entry.getValue());
+        }
+
+        return allAttributes;
     }
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return false;
+        return FilterInvocation.class.isAssignableFrom(clazz);
+    }
+
+    public void reload() throws Exception {
+        LinkedHashMap<RequestMatcher, List<ConfigAttribute>> reloadedMap = securedObjectService.getRolesAndUrl();
+        Iterator<Map.Entry<RequestMatcher, List<ConfigAttribute>>> iterator = reloadedMap.entrySet().iterator();
+
+        //이전 데이터 삭제
+        requestMap.clear();
+
+        while(iterator.hasNext()) {
+            Map.Entry<RequestMatcher, List<ConfigAttribute>> entry = iterator.next();
+            requestMap.put(entry.getKey(), entry.getValue());
+        }
     }
 }
