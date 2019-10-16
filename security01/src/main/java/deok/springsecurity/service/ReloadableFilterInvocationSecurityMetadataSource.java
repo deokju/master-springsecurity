@@ -15,12 +15,12 @@ import java.util.*;
 public class ReloadableFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
     private final Map<RequestMatcher, Collection<ConfigAttribute>> requestMap;
-
-    @Autowired
     private SecuredObjectService securedObjectService;
 
+    @Autowired
     public ReloadableFilterInvocationSecurityMetadataSource(Map<RequestMatcher, Collection<ConfigAttribute>> requestMap) {
         this.requestMap = requestMap;
+        this.setSecuredObjectService(securedObjectService);
     }
 
     public void setSecuredObjectService(SecuredObjectService securedObjectService) {

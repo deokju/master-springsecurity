@@ -70,16 +70,13 @@ public class SecuredObjectDao {
 
 
     @Autowired
-    DataSource oneDataSource;
-
-    public SecuredObjectDao()
+    public SecuredObjectDao(DataSource oneDataSource)
     {
         this.sqlRolesAndUrl      = DEF_ROLES_AND_URL_QUERY;
         this.sqlRolesAndMethod   = DEF_ROLES_AND_METHOD_QUERY;
         this.sqlRolesAndPointcut = DEF_ROLES_AND_POINTCUT_QUERY;
         this.sqlRegexMatchedRequestMapping = DEF_REGEX_MATCHED_REQUEST_MAPPING_QUERY_ORACLE10G;
         this.sqlHierarchicalRoles = DEF_HIERARCHICAL_ROLES_QUERY;
-
         this.setDataSource(oneDataSource);
     }
 

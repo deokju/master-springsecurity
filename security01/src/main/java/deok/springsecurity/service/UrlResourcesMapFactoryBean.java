@@ -14,7 +14,6 @@ import java.util.List;
 @Service
 public class UrlResourcesMapFactoryBean implements FactoryBean<LinkedHashMap<RequestMatcher, List<ConfigAttribute>>> {
 
-    @Autowired
     private SecuredObjectService securedObjectService;
 
     private LinkedHashMap<RequestMatcher, List<ConfigAttribute>> requestMap;
@@ -22,6 +21,10 @@ public class UrlResourcesMapFactoryBean implements FactoryBean<LinkedHashMap<Req
 
     public void init() throws Exception {
         requestMap = securedObjectService.getRolesAndUrl();
+    }
+
+    public void setSecuredObjectService(SecuredObjectService securedObjectService) {
+        this.securedObjectService = securedObjectService;
     }
 
     @Override
