@@ -4,16 +4,11 @@ import deok.springsecurity.dao.CustomJdbcDaoImpl;
 import deok.springsecurity.service.*;
 import deok.springsecurity.util.NonePasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.access.AccessDecisionManager;
-import org.springframework.security.access.AccessDecisionVoter;
-import org.springframework.security.access.ConfigAttribute;
-import org.springframework.security.access.vote.AffirmativeBased;
-
-import org.springframework.security.access.vote.RoleVoter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -24,15 +19,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
-
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-
 
 @Configuration
 @Import({SecurityBean.class})
@@ -43,9 +31,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private AccessDecisionManager accessDecisionManager;
 
     @Autowired
-    private DataSource oneDataSource;
-
-    @Autowired
     private LoginSuccessHandler loginSuccessHandler;
 
     @Autowired
@@ -53,6 +38,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private DaoAuthenticationProvider daoAuthenticationProvider;
 
     private FilterSecurityInterceptor filterSecurityInterceptor;
 
@@ -101,43 +89,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout.do"))		// CSRF 기능 활성화된 상태에서 logout을 GET 방식으로 하게끔 할려면 logoutRequestMatcher메소드를 이용해서 메소드와 상관없이 동작하게끔 설정하면 된다
                 .logoutSuccessUrl("/main.do").permitAll()
                 .deleteCookies("JSESSIONID");
-
-
-/*        http
-                .authorizeRequests()
-                .antMatchers("/css/**", "/index").permitAll()
-                .antMatchers("/deokju/index").hasAuthority("A")
-                .and()
-                .formLogin()
-                .loginPage("/login").defaultSuccessUrl("/deokju/index").failureUrl("/login-error")
-                .successHandler(loginSuccessHandler)
-                .failureHandler(customFailHandler);*/
-
-        //http.addFilterBefore(FilterSecurityInterceptor, )
-
     }
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        CustomJdbcDaoImpl  customJdbcDao = new CustomJdbcDaoImpl();
-        customJdbcDao.setDataSource(oneDataSource);
-        customJdbcDao.setRolePrefix("");
-        customJdbcDao.setUsersByUsernameQuery("SELECT ID, PASSWORD, NAME FROM MEMBERINFO WHERE ID=?");
-        customJdbcDao.setAuthoritiesByUsernameQuery("SELECT ROLE_ID FROM MEMBER_ROLE WHERE ID=?");
-        customJdbcDao.setEnableGroups(false);
 
-
-        auth.authenticationProvider(authenticationProvider(customJdbcDao));
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(daoAuthenticationProvider);
     }
-
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider( CustomJdbcDaoImpl customJdbcDao ) {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(customJdbcDao);
-        authenticationProvider.setPasswordEncoder(new NonePasswordEncoder());
-        return authenticationProvider;
-    }
-
 
 
     @Bean

@@ -11,7 +11,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 
-@Service
 public class UrlResourcesMapFactoryBean implements FactoryBean<LinkedHashMap<RequestMatcher, List<ConfigAttribute>>> {
 
     private SecuredObjectService securedObjectService;

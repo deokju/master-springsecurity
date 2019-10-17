@@ -11,13 +11,12 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-@Service
+
 public class ReloadableFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
     private final Map<RequestMatcher, Collection<ConfigAttribute>> requestMap;
     private SecuredObjectService securedObjectService;
 
-    @Autowired
     public ReloadableFilterInvocationSecurityMetadataSource(Map<RequestMatcher, Collection<ConfigAttribute>> requestMap) {
         this.requestMap = requestMap;
         this.setSecuredObjectService(securedObjectService);
