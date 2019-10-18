@@ -12,7 +12,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.access.vote.AffirmativeBased;
+import org.springframework.security.access.vote.RoleHierarchyVoter;
 import org.springframework.security.access.vote.RoleVoter;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -63,6 +66,8 @@ public class SecurityBean {
 
         decisionVoterList.add(roleVoter);
 
+        RoleHierarchyVoter roleHierarchyVoter = new RoleHierarchyVoter(roleHierarchy())
+
         affirmativeBased = new AffirmativeBased(decisionVoterList);
         affirmativeBased.setAllowIfAllAbstainDecisions(false);		// voter가 모두 기권할 경우 이것을 권한 허용으로 볼지의 여부(true이면 모두 기권할 경우 이것을 권한 허용으로 본다)
         return affirmativeBased;
@@ -81,6 +86,13 @@ public class SecurityBean {
         ReloadableFilterInvocationSecurityMetadataSource rfism = new ReloadableFilterInvocationSecurityMetadataSource(destMap);
         rfism.setSecuredObjectService(sosi);
         return rfism;
+    }
+
+    @Bean
+    public RoleHierarchy roleHierarchy(SecuredObjectService securedObjectService) throws Exception {
+        RoleHierarchyImpl roleHierarchyImpl = new RoleHierarchyImpl();
+        //roleHierarchyImpl.setHierarchy(securedObjectService.getRolesHierarchy());
+        return roleHierarchyImpl;
     }
 
 }

@@ -9,18 +9,23 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.access.AccessDecisionManager;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.sql.DataSource;
+import java.util.Collection;
 
 @Configuration
 @Import({SecurityBean.class})
@@ -57,6 +62,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return filterSecurityInterceptor;
     }
 
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+
+        DefaultWebSecurityExpressionHandler defaultWebSecurityExpressionHandler = new DefaultWebSecurityExpressionHandler();
+        defaultWebSecurityExpressionHandler.setRoleHierarchy(roleHierarchy);
+
+        web.ignoring().antMatchers("/bootstrap/**/*", "/js/**/*")
+                .and()
+                .privilegeEvaluator(webInvocationPrivilegeEvaluator()) 		// webInvocationPrivilegeEvaluator() 메소드에 주석으로 설명되어 있으니 참조할 것
+                .expressionHandler(defaultWebSecurityExpressionHandler);
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
