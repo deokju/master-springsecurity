@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/css/login.css">
+    <link rel="stylesheet" type="text/css" href="/css/signup.css">
+</head>
+<body>
+
+<span class="bodyWrapper">
+    <h2>어서오세요. 처음이신가요?</h2>
+    <form action="/action_page.php" method="post">
+        <div class="imgcontainer">
+            <img src="/img/ryan.jpg" alt="Avatar" class="avatar">
+        </div>
+
+        <div class="container">
+            <label for="uname"><b>사용자 이름</b></label>
+            <input type="text" placeholder="Enter Username" name="uname" required>
+
+            <label for="psw"><b>비밀번호</b></label>
+            <input type="password" placeholder="Enter Password" name="psw" required>
+
+            <button type="submit">로그인</button>
+            <label>
+                <input type="checkbox" checked="checked" name="remember"> 비밀번호 기억
+            </label>
+        </div>
+
+        <div class="container" style="background-color:#f1f1f1">
+            <button type="button" class="signupbtn1" onclick="document.getElementById('id01').style.display='block'">아직 가입 안했니?</button>
+            <span class="psw"><a href="#">비밀번호 잊음?</a></span>
+        </div>
+    </form>
+</span>
+
+<span class="modalWrapper">
+    <div id="id01" class="modal">
+        <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+        <form class="modal-content" action="/action_page.php">
+            <div class="container">
+                <h1>회원가입 하기</h1>
+                <p>가입 하실 사용자 정보를 입력하여 주세요.</p>
+                <hr>
+                <label for="email"><b>사용자 이름</b></label>
+                <input type="text"      placeholder="Enter Email" name="email" required>
+
+                <label for="psw"><b>사용자 비밀번호</b></label>
+                <input type="password"  placeholder="Enter Password" name="psw" required>
+
+                <label for="psw-repeat"><b>사용자 비밀번호 확인</b></label>
+                <input type="password"  placeholder="Repeat Password" name="psw-repeat" required>
+
+                <label for="user-auth"><b>사용자 비밀번호 확인</b></label>
+                <select name="user-auth">
+                    <option value="junior">준 회원</option>
+                    <option value="MEMBER">정 회원</option>
+                    <option value="VIP">VIP 회원</option>
+                    <option value="SUPER_VIP">SUPER VIP 회원</option>
+                </select>
+
+                <p>By creating an account you agree to our <a href="#" style="color:dodgerblue">Terms & Privacy</a>.</p>
+
+                <div class="clearfix">
+                    <button type="button" class="cancelbtn"     onclick="document.getElementById('id01').style.display='none'" >취소</button>
+                    <button type="submit" class="signupbtn">가입 하기</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</span>
+
+
+
+
+</body>
+</html>
